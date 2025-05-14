@@ -26,17 +26,17 @@ bmp.use_case(BMP280_CASE_INDOOR)
 sensor = dht.DHT22(dhtPIN)
 
 # Função para conectar ao wifi
-# Recebe um parâmetro opcional tries que representa o número de tentativas e retorna o servidor
-def wifi_connect(tries = 10):
+# Recebe um parâmetro opcional tentativas que representa o número de tentativas e retorna o servidor
+def wifi_connect(tentativas = 10):
     # Esperando se conectar ou falhar
-    while tries > 0:
+    while tentativas > 0:
         if wlan.status() < 0 or wlan.status() >= 3:
             break
-        tries -= 1
+        tentativas -= 1
         print('Esperando conexão...')
         time.sleep(1)
 
-    # Handle connection error
+    # Lidar com erros de conexão
     if wlan.status() != 3:
         raise RuntimeError('Conexão wifi falhou')
     else:
@@ -44,12 +44,12 @@ def wifi_connect(tries = 10):
         ip=wlan.ifconfig()[0]
         print('IP: ', ip)
     
-    # Open socket
+    # Abrir socket
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('', 80))
     server.listen(5)
-    print('listening on', addr)
+    print('ouvindo em', addr)
     
     return server
     
@@ -60,8 +60,8 @@ def get_temp_press():
     p_bar=pressure/100000
     p_mmHg=pressure/133.3224
     temperature=bmp.temperature
-    print("Temperature: {} C".format(temperature))
-    print("Pressure: {} Pa, {} bar, {} mmHg".format(pressure,p_bar,p_mmHg))
+    print("Temperatura: {} C".format(temperature))
+    print("Pressão: {} Pa, {} bar, {} mmHg".format(pressure,p_bar,p_mmHg))
     return temperature, pressure
 
 # Função para ler a umidade do dht22
@@ -104,9 +104,9 @@ while True:
         print('client connected from', addr)
         request = conn.recv(1024)
         conn.settimeout(None)
-        # HTTP-Request receive
+        # Receber HTTP-Request
         print('Request:', request)              
-        # HTTP-Response send
+        # Enviar HTTP-Response
         temp_bmp, press = get_temp_press()
         temp_dht, umid = get_umid()
         response = web_page(temp_bmp, temp_dht, press, umid)
@@ -115,4 +115,4 @@ while True:
         conn.close()
     except OSError as e:
         conn.close()
-        print('connection closed')
+        print('conexão fechada')
