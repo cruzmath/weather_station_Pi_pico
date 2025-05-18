@@ -72,3 +72,7 @@ O resultado está apresentado na imagem abaixo, que mostra o funcionamento do si
 
 ![Imagem do WhatsApp de 2025-05-14 à(s) 17 02 26_065a8d4a](https://github.com/user-attachments/assets/bd94dccf-d87c-441f-8083-2d991b25831e)
 
+A seguir, temos um vídeo que mostra o site se atualizando em tempo real com novos dados a cada 5s.
+
+
+https://github.com/user-attachments/assets/a16f1e07-73cd-4090-8fcb-7ba2206d0394
