@@ -12,15 +12,16 @@ graph LR
 A[Pi Pico] <-->|Wi-Fi| B[Servidor Web]
 C[BMP280] <-->|I2C| A
 D[DHT22] <-->|OneWire| A
+E[DS3231] <--> |I2C| A
 ```
 
 ### Funcionamento esperado
 
-Do diagrama anterior, deverá se estabelecer uma conexão física entre os dois sensores e a a Pico para que a comunicação entre ambos seja possibilitada. Além disso, será necessário desenvolver um código que possibilite a leitura das informações provenientes deles. Após a leitura, deverá ser necessário desenvolver uma página web (website) para apresentar os dados no navegador e escolher como a conexão entre essa página se dará.
+Do diagrama anterior, deverá se estabelecer uma conexão física entre os três sensores e a a Pico para que a comunicação entre ambos seja possibilitada. Além disso, será necessário desenvolver um código que possibilite a leitura das informações provenientes deles. Após a leitura, deverá ser necessário desenvolver uma página web (website) para apresentar os dados no navegador e escolher como a conexão entre essa página se dará.
 
 Em suma, seguimos os seguintes passos para desenvolver o sistema:
 1. Conectar fisicamente todos os componentes;
-2. Desenvolver duas funções (uma para cada sensor) para coletar as informações que eles enviam;
+2. Desenvolver três funções (uma para cada sensor) para coletar as informações que eles enviam;
 3. Criar uma página web em html, por simplicidade;
 4. Criar uma função que conecte o microcontrolador à internet;
 5. Escolher o protocolo de comunicação do micro para a internet;
@@ -33,10 +34,13 @@ Poderíamos utilizar o protocolo HTTP e fazer, por exemplo, requisição do tipo
 
 Por isso, o melhor procedimento para esse caso é o socket. Ele abre uma requisição e mantém a conexão aberta para continuar com o envio de dados sem que seja necessário passar todos os parâmetros da requisição novamente, apenas os dados que necessitam ser atualizados.
 
+Ademais, outro ponto importante é a escolha da utilização de um sensor para medir tempo ao invés de se usar uma API. Essa decisão foi tomada pensando em liberar o máximo de processamento do microcontrolador para que as medições tomadas possam ser precisas e acontecer no tempo desejado.
+
 ## Componentes utilizados
-Neste projeto foram utilizados 2 sensores diferentes para obter todas as informações climáticas relevantes. Estes são
+Neste projeto foram utilizados três sensores diferentes para obter todas as informações climáticas relevantes, juntamente com a hora atual. Estes são
 * DHT22: Obtém dados de temperatura e umidade relativa do ar
 * BMP280: Obtém dados de temperatura e pressão atmosférica
+* DS3231: *Real time Clock* para atribuir leituras temporais às outras medidas
 * Placa de desenvolvimento BITDOGLAB com o microcontrolador Raspberry Pi Pico
 * Jumpers e protoboard para conectar os sensores à placa
 
@@ -49,8 +53,9 @@ Bibliotecas utilizadas:
 * socket
 * network
 * dht
+* urtc
 
-obs: A biblioteca bmp280 não é nativa do micropython. Dessa forma, usando a IDE Thonny, o arquivo bmp280.py foi salvo na Pico para que fosse possível usar os recursos dela.
+obs: As bibliotecas bmp280 e urtc não são nativas do micropython. Dessa forma, usando a IDE Thonny, os arquivos bmp280.py e urtc.py foram salvos na Pico para que fosse possível usar os recursos delas.
 
 ## Código
 
@@ -58,21 +63,23 @@ O código principal está no arquivo `main.py` e abriga todas as funções bem c
 
 Algo relevante a se comentar é que os dados do wifi foram *hardcoded* no código, o que não é recomendado, tendo sido feito apenas por simplicidade. O ideal seria criar variáveis de ambiente para armazenar esses valores e apenas usar eles sem explicitá-los.
 
-Após as definições das constantes do projeto: [Pinos dos sensores, nome e senha do wifi, tipo do sensor DHT: 11 ou 12, são definidas as funções explicitadas na subseção "Funcionamento esperado", em que:
+Após as definições das constantes do projeto: [Pinos dos sensores, nome e senha do wifi, tipo do sensor DHT: 11 ou 12, tipo do sensor RTC: DS3231, DS1307 ou PCF8523] são definidas as funções explicitadas na subseção "Funcionamento esperado", em que:
+* `set_time`: Função para inserir a hora local no RTC, não requer parâmetros e não tem retorno.
+  
 * `wifi_connect`: Função para conectar ao wifi. Recebe um parâmetro opcional tentativas que representa o número de tentativas e retorna o servidor.
 
 * `get_temp_press`: Função para ler a temperatura e a pressão do BMP280. Não requer nenhum parâmetro e retorna a temperatura e a pressão.
 
 * `get_umid`: Função para ler a umidade do DHT22. Não requer nenhum parâmetro e retorna a umidade.
+  
+* `get_time`: Função para ler e formatar a hora atual do RTC, não requer parâmetros e retorna a hora formatada
 
 * `web_page`: Função para configurar a página web.# Recebe os valores de temperatura (BMP e DHT), pressão e umidade e retorna o html para o site.
+
+Além disso, também existem as funções que começam com 'config', seu objetivo é configurar cada sensor e retornar um objeto com as configurações cada tenha tido sucesso na operação.
 
 ## Resultados
 O resultado está apresentado na imagem abaixo, que mostra o funcionamento do site, com os valores recebidos pela Pico através do Wi-Fi.
 
-![Imagem do WhatsApp de 2025-05-14 à(s) 17 02 26_065a8d4a](https://github.com/user-attachments/assets/bd94dccf-d87c-441f-8083-2d991b25831e)
-
 A seguir, temos um vídeo que mostra o site se atualizando em tempo real com novos dados a cada 5s.
 
-
-https://github.com/user-attachments/assets/a16f1e07-73cd-4090-8fcb-7ba2206d0394
