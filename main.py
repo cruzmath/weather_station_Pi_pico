@@ -4,6 +4,7 @@ import time
 import socket
 import network
 import dht
+import urtc
 
 # Definições
 sdaPIN = Pin(18)
@@ -21,9 +22,50 @@ wlan.connect(wifi_name, wifi_password)
 bus = I2C(1,sda=sdaPIN, scl=sclPIN, freq=400000)
 
 # Configurações sensores
-bmp = BMP280(bus)
-bmp.use_case(BMP280_CASE_INDOOR)
-sensor = dht.DHT22(dhtPIN)
+def config_bmp():
+    try:
+        bmp = BMP280(bus)
+        bmp.use_case(BMP280_CASE_INDOOR)
+        return bmp
+    except Exception as e:
+        print('erro de configuração no bmp', e)
+        pass
+
+def config_dht():
+    try:
+        dht_sensor = dht.DHT22(dhtPIN)
+        return dht_sensor
+    except Exception as e:
+        print('erro de configuração no dht', e)
+        
+def config_rtc():
+    try:
+        rtc = urtc.DS3231(bus)
+        return rtc
+    except Exception as e:
+        print('erro de configuração no rtc', e)
+
+def configs():
+    bmp = config_bmp()
+    dht_sensor = config_dht()
+    rtc = config_rtc()
+    return bmp, dht_sensor, rtc
+
+def set_time():
+    # Setar a hora atual usando uma tupla de tempo específica
+    # Tupla de tempo: (ano, mês, dia, dia da semana, hora, minuto, segundos, milisegundos)
+    # initial_time = (2025, 6, 18, 3, 14, 30, 0, 0)
+
+    # Ou pegar a hora local do sistema
+    initial_time_tuple = time.localtime()  # tupla (microPython)
+    initial_time_seconds = time.mktime(initial_time_tuple)  # hora local em segundos
+
+    # Converter para tuple com a biblioteca
+    initial_time = urtc.seconds2tuple(initial_time_seconds)
+
+    # Sincronizar o RTC
+    rtc.datetime(initial_time)
+
 
 sensor_data = [] #lista para guardar os dados dos sensores em forma de linhas para tabela html
 
@@ -66,30 +108,32 @@ def get_temp_press():
         print("Temperatura: {} C".format(temperature))
         print("Pressão: {} Pa, {} bar, {} mmHg".format(pressure,p_bar,p_mmHg))
         return temperature, pressure
-    except:
-        print("Erro no bmp280")
+    except Exception as e:
+        print("Erro no bmp280", e)
         return 0, 0
     
 # Função para ler a umidade do dht22
 # Não requer nenhum parâmetro e retorna a temperatura e a umidade
 def get_umid():
     try:
-        sensor.measure()
-        temp_dht = sensor.temperature()
-        umid = sensor.humidity()
+        dht_sensor.measure()
+        temp_dht = dht_sensor.temperature()
+        umid = dht_sensor.humidity()
         print("Umidade relativa {} %".format(umid))
         return temp_dht, umid
-    except:
-        print("Erro no dht22")
+    except Exception as e:
+        print("Erro no dht22", e)
         return 0, 0
 
 # Função para ler o tempo atual do rtc
 # Não requer nenhum parâmetro e retorna o tempo 
 def get_time():
     try:
-        pass
-    except:
-        print("Erro no rtc")
+        current_datetime = rtc.datetime()
+        formatted_datetime = f"{current_datetime.day}/{current_datetime.month}/{current_datetime.year} - {current_datetime.hour}:{current_datetime.minute}:{current_datetime.second}"
+        return formatted_datetime
+    except Exception as e:
+        print("Erro no rtc", e)
         return 0
 
 # Atualiza as linhas da tabela a cada 5 segundos
@@ -125,6 +169,8 @@ def web_page():
     return html.encode("utf-8")
 
 server = wifi_connect()
+bmp, dht_sensor, rtc = configs()
+set_time()
 
 while True:
     try:
