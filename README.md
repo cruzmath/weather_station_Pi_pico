@@ -72,7 +72,7 @@ Após as definições das constantes do projeto: [Pinos dos sensores, nome e sen
 
 * `get_umid`: Função para ler a umidade do DHT22. Não requer nenhum parâmetro e retorna a umidade.
   
-* `get_time`: Função para ler e formatar a hora atual do RTC, não requer parâmetros e retorna a hora formatada
+* `get_time`: Função para ler e formatar a hora atual do RTC, não requer parâmetros e retorna a hora formatada.
 
 * `web_page`: Função para configurar a página web.# Recebe os valores de temperatura (BMP e DHT), pressão e umidade e retorna o html para o site.
 
@@ -81,5 +81,8 @@ Além disso, também existem as funções que começam com 'config', seu objetiv
 ## Resultados
 O resultado está apresentado na imagem abaixo, que mostra o funcionamento do site, com os valores recebidos pela Pico através do Wi-Fi.
 
+![image](https://github.com/user-attachments/assets/e7c1a507-e6db-4fcc-a822-b19ed833f481)
+
 A seguir, temos um vídeo que mostra o site se atualizando em tempo real com novos dados a cada 5s.
 
+https://github.com/user-attachments/assets/d1fb7aea-b91a-448c-b332-6fe8dec15ac4
