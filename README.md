@@ -57,6 +57,15 @@ Bibliotecas utilizadas:
 
 obs: As bibliotecas bmp280 e urtc não são nativas do micropython. Dessa forma, usando a IDE Thonny, os arquivos bmp280.py e urtc.py foram salvos na Pico para que fosse possível usar os recursos delas.
 
+## Esquemático das conexões físicas
+
+Para o desenvolvimento da PCB (Placa de Circuito Impresso), foi primeiramente desenhada todas as conexões necessárias entre os sensores no *software* KiCad e, então, exportado para que a placa foi criada. 
+
+As imagens abaixo apresenta esse esquemático (a) e a simulação da PCB (b)
+| <img src="https://github.com/user-attachments/assets/590b4743-d5d7-40ce-96bc-e3cf9410d038" width="400"/> | <img src="https://github.com/user-attachments/assets/c9bcc077-3c70-4d06-abaf-d67cc21c4574" width="400"/> |
+|:--:|:--:|
+| (a) | (b) |
+
 ## Código
 
 O código principal está no arquivo `main.py` e abriga todas as funções bem como o seu método de uso.
