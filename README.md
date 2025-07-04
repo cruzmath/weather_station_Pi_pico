@@ -59,9 +59,11 @@ obs: As bibliotecas bmp280 e urtc não são nativas do micropython. Dessa forma,
 
 ## Esquemático das conexões físicas
 
-Para o desenvolvimento da PCB (Placa de Circuito Impresso), foi primeiramente desenhada todas as conexões necessárias entre os sensores no *software* KiCad e, então, exportado para que a placa foi criada. 
+Para o desenvolvimento da PCB (Placa de Circuito Impresso), foram primeiramente desenhadas todas as conexões necessárias entre os sensores no software KiCad e, então, exportados nos arquivos específicos para a furação da placa.
 
-As imagens abaixo apresenta esse esquemático (a) e a simulação da PCB (b)
+As trilhas foram desenhadas com largura de 0,76 mm e espaçamento mínimo de 1 mm na região inferior da placa com face única de cobre. Utilizaram-se conectores verticais macho-fêmea (sockets) com o espaçamento padrão de 2,54 mm, cujos buracos possuem 1 mm de diâmetro e os pads, 1,5 mm. Os conectores foram posicionados de forma a evitar a sobreposição entre trilhas de cobre. Além disso, realizou-se o preenchimento de planos de terra com ferramenta própria do software. Após soldagem dos conectores, todos os pinos disponíveis nos terminais dos sensores utilizados estão disponíveis para serem acessados e conectados ao BitDogLab.
+
+As imagens abaixo apresentam esse esquemático (a) e a simulação da PCB (b)
 | <img src="https://github.com/user-attachments/assets/590b4743-d5d7-40ce-96bc-e3cf9410d038" width="400"/> | <img src="https://github.com/user-attachments/assets/c9bcc077-3c70-4d06-abaf-d67cc21c4574" width="400"/> |
 |:--:|:--:|
 | (a) | (b) |
